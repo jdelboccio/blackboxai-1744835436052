@@ -3,103 +3,183 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Queladilla - Juego de Trivia Latina</title>
+    <title>queladilla - trivia latina</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="/socket.io/socket.io.js"></script>
     <style>
+        * {
+            text-transform: lowercase;
+        }
+        
         body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            font-family: 'Space Grotesk', sans-serif;
+            background: #ffffff;
             min-height: 100vh;
-            margin: 0;
-            padding: 0;
+            cursor: default;
         }
-        .glass-effect {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+
+        .gradient-text {
+            background: linear-gradient(90deg, #000000, #333333);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
+
+        .hover-lift {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .hover-lift:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+        }
+
         .input-field {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(5px);
-            color: white;
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid #eee;
             transition: all 0.3s ease;
         }
-        .input-field::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
+
         .input-field:focus {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: rgba(255, 255, 255, 0.5);
-            outline: none;
+            border-color: #000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
         }
-        .btn-hover {
+
+        @keyframes fadeUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(20px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        @keyframes scaleIn {
+            from { 
+                transform: scale(0.95); 
+                opacity: 0; 
+            }
+            to { 
+                transform: scale(1); 
+                opacity: 1; 
+            }
+        }
+
+        .animate-fade-up {
+            animation: fadeUp 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            opacity: 0;
+        }
+
+        .animate-scale-in {
+            animation: scaleIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            opacity: 0;
+        }
+
+        .button-hover {
+            position: relative;
+            overflow: hidden;
             transition: all 0.3s ease;
         }
-        .btn-hover:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+
+        .button-hover::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 120%;
+            height: 0;
+            padding-bottom: 120%;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            opacity: 0;
+            transition: transform 0.5s ease, opacity 0.3s ease;
+        }
+
+        .button-hover:hover::after {
+            transform: translate(-50%, -50%) scale(1);
+            opacity: 1;
+        }
+
+        .grain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.05;
+            mix-blend-mode: multiply;
         }
     </style>
 </head>
-<body class="text-white">
-    <div id="app" class="container mx-auto px-4 py-8 min-h-screen flex items-center justify-center">
+<body class="text-black">
+    <div class="grain"></div>
+    <div id="app" class="container mx-auto px-4 py-8 min-h-screen flex items-center justify-center relative">
         <!-- Landing Page -->
-        <div id="landing" class="w-full max-w-md">
-            <div class="text-center mb-12">
-                <h1 class="text-5xl font-bold mb-4 animate-fade-in">¡Queladilla!</h1>
-                <p class="text-xl opacity-90">El juego de trivia más divertido de Latinoamérica</p>
+        <div id="landing" class="w-full max-w-md space-y-12">
+            <div class="text-center animate-fade-up" style="animation-delay: 0.2s">
+                <h1 class="text-7xl font-bold mb-4 tracking-tight gradient-text">queladilla!</h1>
+                <p class="text-xl text-gray-600">el juego de trivia más divertido de latinoamérica</p>
             </div>
             
             <!-- Create Game Button -->
             <button id="createGameBtn" onclick="createGame()" 
-                    class="glass-effect btn-hover w-full mb-6 py-4 px-6 rounded-xl text-lg font-semibold flex items-center justify-center">
+                    class="button-hover hover-lift w-full py-5 px-6 rounded-2xl text-lg font-bold bg-black text-white flex items-center justify-center animate-fade-up"
+                    style="animation-delay: 0.4s">
                 <i class="fas fa-plus-circle mr-3"></i>
-                Crear Juego Nuevo
+                crear juego nuevo
             </button>
             
             <!-- Join Game Form -->
-            <div class="glass-effect rounded-xl p-6 mb-8">
-                <h2 class="text-2xl font-semibold mb-6 text-center">Unirse a un Juego</h2>
-                <div class="space-y-4">
-                    <input type="text" id="gameCode" 
-                           placeholder="Código del Juego" 
-                           class="input-field w-full px-4 py-3 rounded-lg text-lg uppercase"
-                           maxlength="6">
-                    <input type="text" id="playerName" 
-                           placeholder="Tu Nombre" 
-                           class="input-field w-full px-4 py-3 rounded-lg text-lg"
-                           maxlength="20">
+            <div class="bg-white rounded-2xl p-8 shadow-xl hover-lift animate-fade-up" style="animation-delay: 0.6s">
+                <h2 class="text-3xl font-bold mb-8 text-center gradient-text">unirse a un juego</h2>
+                <div class="space-y-5">
+                    <div class="relative">
+                        <input type="text" id="gameCode" 
+                               placeholder="código del juego" 
+                               class="input-field w-full px-5 py-4 rounded-xl text-lg uppercase bg-gray-50"
+                               maxlength="6">
+                    </div>
+                    <div class="relative">
+                        <input type="text" id="playerName" 
+                               placeholder="tu nombre" 
+                               class="input-field w-full px-5 py-4 rounded-xl text-lg bg-gray-50"
+                               maxlength="20">
+                    </div>
                     <button id="joinGameBtn" onclick="joinGame()" 
-                            class="btn-hover bg-blue-500 hover:bg-blue-600 w-full py-3 rounded-lg text-lg font-semibold flex items-center justify-center">
+                            class="button-hover bg-black hover:bg-gray-900 text-white w-full py-4 rounded-xl text-lg font-bold flex items-center justify-center transition-all duration-300">
                         <i class="fas fa-sign-in-alt mr-3"></i>
-                        Unirse al Juego
+                        unirse al juego
                     </button>
                 </div>
             </div>
             
             <!-- How to Play -->
-            <div class="glass-effect rounded-xl p-6">
-                <h2 class="text-2xl font-semibold mb-4 text-center">¿Cómo Jugar?</h2>
-                <ul class="space-y-4">
-                    <li class="flex items-start">
-                        <span class="flex items-center justify-center bg-white/20 rounded-full w-8 h-8 mr-3 flex-shrink-0">1</span>
-                        <span>Crea un juego nuevo o únete con un código existente</span>
+            <div class="bg-white rounded-2xl p-8 shadow-xl hover-lift animate-fade-up" style="animation-delay: 0.8s">
+                <h2 class="text-3xl font-bold mb-8 text-center gradient-text">¿cómo jugar?</h2>
+                <ul class="space-y-6">
+                    <li class="flex items-start group">
+                        <span class="flex items-center justify-center bg-black text-white rounded-xl w-10 h-10 mr-4 flex-shrink-0 font-bold transition-transform group-hover:scale-110">1</span>
+                        <span class="text-gray-700 text-lg">crea un juego nuevo o únete con un código existente</span>
                     </li>
-                    <li class="flex items-start">
-                        <span class="flex items-center justify-center bg-white/20 rounded-full w-8 h-8 mr-3 flex-shrink-0">2</span>
-                        <span>Lee la pregunta y escribe una respuesta engañosa</span>
+                    <li class="flex items-start group">
+                        <span class="flex items-center justify-center bg-black text-white rounded-xl w-10 h-10 mr-4 flex-shrink-0 font-bold transition-transform group-hover:scale-110">2</span>
+                        <span class="text-gray-700 text-lg">lee la pregunta y escribe una respuesta engañosa</span>
                     </li>
-                    <li class="flex items-start">
-                        <span class="flex items-center justify-center bg-white/20 rounded-full w-8 h-8 mr-3 flex-shrink-0">3</span>
-                        <span>¡Vota por la respuesta que crees que es verdadera!</span>
+                    <li class="flex items-start group">
+                        <span class="flex items-center justify-center bg-black text-white rounded-xl w-10 h-10 mr-4 flex-shrink-0 font-bold transition-transform group-hover:scale-110">3</span>
+                        <span class="text-gray-700 text-lg">¡vota por la respuesta que crees que es verdadera!</span>
                     </li>
-                    <li class="flex items-start">
-                        <span class="flex items-center justify-center bg-white/20 rounded-full w-8 h-8 mr-3 flex-shrink-0">4</span>
-                        <span>Gana puntos por engañar a otros jugadores</span>
+                    <li class="flex items-start group">
+                        <span class="flex items-center justify-center bg-black text-white rounded-xl w-10 h-10 mr-4 flex-shrink-0 font-bold transition-transform group-hover:scale-110">4</span>
+                        <span class="text-gray-700 text-lg">gana puntos por engañar a otros jugadores</span>
                     </li>
                 </ul>
             </div>
