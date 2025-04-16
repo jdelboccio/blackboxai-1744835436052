@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Queladilla - Juego de Trivia Latina</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .input-field {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            color: white;
+            transition: all 0.3s ease;
+        }
+        .input-field::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+        .input-field:focus {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.5);
+            outline: none;
+        }
+        .btn-hover {
+            transition: all 0.3s ease;
+        }
+        .btn-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+    </style>
+</head>
+<body class="text-white">
+    <div id="app" class="container mx-auto px-4 py-8 min-h-screen flex items-center justify-center">
+        <!-- Landing Page -->
+        <div id="landing" class="w-full max-w-md">
+            <div class="text-center mb-12">
+                <h1 class="text-5xl font-bold mb-4 animate-fade-in">¡Queladilla!</h1>
+                <p class="text-xl opacity-90">El juego de trivia más divertido de Latinoamérica</p>
+            </div>
+            
+            <!-- Create Game Button -->
+            <button id="createGameBtn" onclick="createGame()" 
+                    class="glass-effect btn-hover w-full mb-6 py-4 px-6 rounded-xl text-lg font-semibold flex items-center justify-center">
+                <i class="fas fa-plus-circle mr-3"></i>
+                Crear Juego Nuevo
+            </button>
+            
+            <!-- Join Game Form -->
+            <div class="glass-effect rounded-xl p-6 mb-8">
+                <h2 class="text-2xl font-semibold mb-6 text-center">Unirse a un Juego</h2>
+                <div class="space-y-4">
+                    <input type="text" id="gameCode" 
+                           placeholder="Código del Juego" 
+                           class="input-field w-full px-4 py-3 rounded-lg text-lg uppercase"
+                           maxlength="6">
+                    <input type="text" id="playerName" 
+                           placeholder="Tu Nombre" 
+                           class="input-field w-full px-4 py-3 rounded-lg text-lg"
+                           maxlength="20">
+                    <button id="joinGameBtn" onclick="joinGame()" 
+                            class="btn-hover bg-blue-500 hover:bg-blue-600 w-full py-3 rounded-lg text-lg font-semibold flex items-center justify-center">
+                        <i class="fas fa-sign-in-alt mr-3"></i>
+                        Unirse al Juego
+                    </button>
+                </div>
+            </div>
+            
+            <!-- How to Play -->
+            <div class="glass-effect rounded-xl p-6">
+                <h2 class="text-2xl font-semibold mb-4 text-center">¿Cómo Jugar?</h2>
+                <ul class="space-y-4">
+                    <li class="flex items-start">
+                        <span class="flex items-center justify-center bg-white/20 rounded-full w-8 h-8 mr-3 flex-shrink-0">1</span>
+                        <span>Crea un juego nuevo o únete con un código existente</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="flex items-center justify-center bg-white/20 rounded-full w-8 h-8 mr-3 flex-shrink-0">2</span>
+                        <span>Lee la pregunta y escribe una respuesta engañosa</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="flex items-center justify-center bg-white/20 rounded-full w-8 h-8 mr-3 flex-shrink-0">3</span>
+                        <span>¡Vota por la respuesta que crees que es verdadera!</span>
+                    </li>
+                    <li class="flex items-start">
+                        <span class="flex items-center justify-center bg-white/20 rounded-full w-8 h-8 mr-3 flex-shrink-0">4</span>
+                        <span>Gana puntos por engañar a otros jugadores</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Game Room (Hidden by default) -->
+        <div id="gameRoom" class="hidden w-full max-w-md">
+            <!-- Will be populated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Game Logic -->
+    <script src="/js/game.js"></script>
+</body>
+</html>
